@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ranking Referentes — Recticar Corrientes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --navy:    #2b3d60;
+    --navy-d:  #1e2d4a;
+    --navy-l:  #3a5080;
+    --navy-xl: #eef1f7;
+    --white:   #ffffff;
+    --bg:      #f4f5f8;
+    --border:  #dde1ea;
+    --text:    #1a2035;
+    --text2:   #5a6480;
+    --text3:   #9aa0b4;
+    --green:   #0f6e56;
+    --green-l: #e0f5ee;
+    --gold:    #c8960a;
+    --gold-l:  #fdf5df;
+    --silver:  #6b7280;
+    --silver-l:#f1f2f4;
+    --bronze:  #9a5020;
+    --bronze-l:#fdf0e8;
+    --shadow:  0 2px 8px rgba(43,61,96,.10);
+    --shadow-md: 0 4px 16px rgba(43,61,96,.13);
+    --radius:  12px;
+  }
+
+  body {
+    font-family: 'Poppins', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ── */
+  .header {
+    background: var(--navy);
+    padding: 32px 20px 28px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .header::before {
+    content: '';
+    position: absolute; inset: 0;
+    background:
+      radial-gradient(ellipse 70% 80% at 50% 120%, rgba(255,255,255,.06) 0%, transparent 60%),
+      repeating-linear-gradient(45deg, transparent, transparent 28px, rgba(255,255,255,.02) 28px, rgba(255,255,255,.02) 29px);
+    pointer-events: none;
+  }
+  .header-inner { position: relative; z-index: 1; max-width: 640px; margin: 0 auto; }
+
+  .logo-row {
+    display: flex; align-items: center; justify-content: center;
+    gap: 10px; margin-bottom: 16px;
+  }
+  .logo-mark {
+    width: 40px; height: 40px; background: rgba(255,255,255,.15);
+    border: 1px solid rgba(255,255,255,.25);
+    border-radius: 8px; display: flex; align-items: center; justify-content: center;
+    font-family: 'DM Mono', monospace; font-size: 12px; font-weight: 500;
+    color: white; letter-spacing: -.5px; flex-shrink: 0;
+  }
+  .brand-name {
+    font-size: 13px; font-weight: 600; color: rgba(255,255,255,.7);
+    letter-spacing: .12em; text-transform: uppercase;
+  }
+
+  .header h1 {
+    font-size: clamp(26px, 6vw, 38px);
+    font-weight: 700; color: #ffffff;
+    letter-spacing: -.5px; line-height: 1.1;
+    margin-bottom: 6px;
+  }
+  .header h1 span { color: rgba(255,255,255,.55); font-weight: 500; }
+  .header-sub {
+    font-size: 13px; color: rgba(255,255,255,.5);
+    font-weight: 400; letter-spacing: .04em;
+  }
+
+  /* ── TIERS ── */
+  .tiers-bar {
+    background: var(--navy-d);
+    padding: 10px 20px;
+    display: flex; justify-content: center; gap: 6px; flex-wrap: wrap;
+  }
+  .tier-pill {
+    font-size: 11px; font-weight: 500; padding: 4px 12px;
+    border-radius: 20px; letter-spacing: .04em;
+    border: 1px solid rgba(255,255,255,.12);
+    color: rgba(255,255,255,.6);
+  }
+  .tier-pill.oro    { color: #f5d060; border-color: rgba(245,208,96,.3); background: rgba(245,208,96,.08); }
+  .tier-pill.plata  { color: #c0c4cc; border-color: rgba(192,196,204,.3); background: rgba(192,196,204,.07); }
+  .tier-pill.bronce { color: #d4956a; border-color: rgba(212,149,106,.3); background: rgba(212,149,106,.08); }
+
+  /* ── WRAP ── */
+  .wrap { max-width: 680px; margin: 0 auto; padding: 24px 16px 60px; }
+
+  /* ── STATS ── */
+  .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
+  .stat {
+    background: var(--white); border-radius: var(--radius);
+    border: 1px solid var(--border); padding: 14px 18px;
+    box-shadow: var(--shadow);
+  }
+  .stat-label { font-size: 10px; font-weight: 600; color: var(--text3); text-transform: uppercase; letter-spacing: .08em; margin-bottom: 4px; }
+  .stat-value { font-size: 28px; font-weight: 700; color: var(--navy); font-family: 'DM Mono', monospace; }
+  .stat-value.green { color: var(--green); }
+
+  /* ── RANKING ── */
+  .ranking { display: flex; flex-direction: column; gap: 8px; }
+
+  .row {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+    display: grid;
+    grid-template-columns: 42px 40px 1fr auto;
+    align-items: center; gap: 12px;
+    box-shadow: var(--shadow);
+    opacity: 0; transform: translateY(12px);
+    animation: fadeUp .35s ease forwards;
+    transition: border-color .2s, box-shadow .2s, transform .15s;
+    cursor: default;
+  }
+  .row:hover {
+    border-color: var(--navy-l);
+    box-shadow: var(--shadow-md);
+    transform: translateY(-1px);
+  }
+
+  .row-1 { border-left: 4px solid var(--gold);   background: var(--gold-l); }
+  .row-2 { border-left: 4px solid var(--silver);  background: var(--silver-l); }
+  .row-3 { border-left: 4px solid var(--bronze);  background: var(--bronze-l); }
+  .row:not(.row-1):not(.row-2):not(.row-3) { border-left: 4px solid var(--border); }
+
+  @keyframes fadeUp { to { opacity:1; transform:translateY(0); } }
+
+  .pos {
+    font-family: 'DM Mono', monospace;
+    font-size: 20px; font-weight: 500;
+    color: var(--text3); text-align: center;
+  }
+  .row-1 .pos { color: var(--gold); font-weight: 700; }
+  .row-2 .pos { color: var(--silver); font-weight: 700; }
+  .row-3 .pos { color: var(--bronze); font-weight: 700; }
+
+  .medal { font-size: 24px; text-align: center; line-height: 1; }
+
+  .info { min-width: 0; }
+  .mec-name {
+    font-weight: 600; font-size: 14px; color: var(--text);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .mec-meta {
+    font-size: 11px; color: var(--text3); margin-top: 2px;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+
+  .right { text-align: right; flex-shrink: 0; }
+  .nivel-badge {
+    font-size: 10px; font-weight: 600; padding: 2px 9px;
+    border-radius: 10px; letter-spacing: .05em; text-transform: uppercase;
+    display: inline-block; margin-bottom: 5px; border: 1px solid;
+  }
+  .nb-oro    { color: var(--gold);   background: var(--gold-l);   border-color: rgba(200,150,10,.25); }
+  .nb-plata  { color: var(--silver); background: var(--silver-l); border-color: rgba(107,114,128,.25); }
+  .nb-bronce { color: var(--bronze); background: var(--bronze-l); border-color: rgba(154,80,32,.25); }
+
+  .cli-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 22px; font-weight: 600; color: var(--navy);
+    line-height: 1;
+  }
+  .cli-label { font-size: 10px; color: var(--text3); text-transform: uppercase; letter-spacing: .06em; }
+
+  /* ── LOADING / ERROR ── */
+  .loading { text-align: center; padding: 56px 20px; color: var(--text2); font-size: 13px; }
+  .spinner {
+    width: 28px; height: 28px; border: 2px solid var(--border);
+    border-top-color: var(--navy); border-radius: 50%;
+    animation: spin .7s linear infinite; margin: 0 auto 14px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .error-box {
+    background: var(--white); border: 1px solid #f0c0b0;
+    border-radius: var(--radius); padding: 24px 20px;
+    color: #993020; font-size: 13px; text-align: center;
+    line-height: 1.7; box-shadow: var(--shadow);
+  }
+  .empty { text-align: center; padding: 56px 20px; color: var(--text3); font-size: 13px; }
+
+  /* ── FOOTER ── */
+  .updated { text-align: center; font-size: 11px; color: var(--text3); margin: 18px 0 0; }
+  .footer {
+    margin-top: 32px; text-align: center;
+    font-size: 11px; color: var(--text3); letter-spacing: .04em;
+  }
+  .footer strong { color: var(--navy); }
+
+  /* ── SEPARATOR ── */
+  .section-label {
+    font-size: 10px; font-weight: 600; color: var(--text3);
+    text-transform: uppercase; letter-spacing: .1em;
+    margin-bottom: 12px; padding-left: 4px;
+  }
+
+  @media (max-width: 480px) {
+    .row { grid-template-columns: 34px 34px 1fr auto; gap: 8px; padding: 12px; }
+    .pos { font-size: 17px; } .medal { font-size: 20px; }
+    .mec-name { font-size: 13px; } .cli-num { font-size: 19px; }
+    .stat-value { font-size: 24px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-inner">
+    <div class="logo-row">
+      <div class="logo-mark">RC</div>
+      <div class="brand-name">Recticar Corrientes</div>
+    </div>
+    <h1>Ranking <span>de</span> Referentes</h1>
+    <div class="header-sub">Programa de mecánicos aliados · Actualización automática</div>
+  </div>
+</div>
+
+<div class="tiers-bar">
+  <div class="tier-pill bronce">🥉 Bronce — ingreso</div>
+  <div class="tier-pill plata">🥈 Plata — desde $40.000</div>
+  <div class="tier-pill oro">🥇 Oro — desde $100.000</div>
+</div>
+
+<div class="wrap">
+
+  <div class="stats" id="stats" style="display:none">
+    <div class="stat">
+      <div class="stat-label">Mecánicos activos</div>
+      <div class="stat-value" id="stat-mecs">—</div>
+    </div>
+    <div class="stat">
+      <div class="stat-label">Clientes referidos</div>
+      <div class="stat-value green" id="stat-cli">—</div>
+    </div>
+  </div>
+
+  <div class="section-label" id="rank-label" style="display:none">Posiciones</div>
+
+  <div id="ranking-container">
+    <div class="loading">
+      <div class="spinner"></div>
+      Cargando ranking...
+    </div>
+  </div>
+
+  <div class="updated" id="updated"></div>
+
+  <div class="footer">
+    Solo lectura · <strong>Recticar Corrientes</strong> · Repuestos &amp; Rectificaciones · Corrientes, Argentina
+  </div>
+
+</div>
+
+<script>
+const SHEET_ID = '2PACX-1vQi9ACwmngUflfGAOmncjK-50Ea_TYhH7-_TnDDbH9TOuOSjoZx3thk3gZH_Q6Ilw';
+const GID      = '1084922083';
+const BASE_URL = `https://docs.google.com/spreadsheets/d/e/${SHEET_ID}/pub?gid=${GID}&single=true&output=csv`;
+
+const PROXIES = [
+  BASE_URL,
+  `https://api.allorigins.win/raw?url=${encodeURIComponent(BASE_URL)}`,
+  `https://corsproxy.io/?${encodeURIComponent(BASE_URL)}`,
+];
+
+function parseCSV(text) {
+  const lines = text.trim().split('\n').map(l => l.trim()).filter(Boolean);
+  if (lines.length < 2) return [];
+  const rows = [];
+  for (let i = 1; i < lines.length; i++) {
+    const cols = []; let cur = '', inQ = false;
+    for (let c = 0; c < lines[i].length; c++) {
+      const ch = lines[i][c];
+      if (ch === '"') { inQ = !inQ; }
+      else if (ch === ',' && !inQ) { cols.push(cur.trim()); cur = ''; }
+      else { cur += ch; }
+    }
+    cols.push(cur.trim());
+    rows.push(cols);
+  }
+  return rows;
+}
+
+// Índices de columna en el CSV exportado
+// CSV col 0 = col A (vacía en el Sheet), 1=B(Pos), 2=C(🏅), 3=D(Nombre), 4=E(Taller), 5=F(Zona), 6=G(Nivel), 7=H(Clientes)
+const C = { pos:1, nombre:3, taller:4, zona:5, nivel:6, clientes:7 };
+
+function nbClass(nivel) {
+  if (!nivel) return 'nb-bronce';
+  const l = nivel.toLowerCase();
+  if (l.includes('oro'))   return 'nb-oro';
+  if (l.includes('plata')) return 'nb-plata';
+  return 'nb-bronce';
+}
+
+function render(rows) {
+  const valid = rows
+    .filter(r => (r[C.nombre]||'').trim() && !isNaN(parseInt(r[C.pos])) && parseInt(r[C.pos]) > 0)
+    .sort((a,b) => parseInt(a[C.pos]) - parseInt(b[C.pos]));
+
+  const container = document.getElementById('ranking-container');
+
+  if (!valid.length) {
+    container.innerHTML = '<div class="empty">No hay mecánicos en el ranking aún.</div>';
+    return;
+  }
+
+  // Stats
+  const totalCli = valid.reduce((s,r) => s + (parseInt(r[C.clientes])||0), 0);
+  document.getElementById('stat-mecs').textContent = valid.length;
+  document.getElementById('stat-cli').textContent  = totalCli;
+  document.getElementById('stats').style.display   = 'grid';
+  document.getElementById('rank-label').style.display = 'block';
+
+  const medals = {1:'🥇', 2:'🥈', 3:'🥉'};
+
+  const html = valid.map((r, i) => {
+    const pos      = parseInt(r[C.pos]) || (i+1);
+    const nombre   = r[C.nombre] || '—';
+    const taller   = (r[C.taller]||'').trim();
+    const zona     = (r[C.zona]  ||'').trim();
+    const nivel    = (r[C.nivel] ||'🥉 Bronce').trim();
+    const clientes = (r[C.clientes]||'0').trim();
+    const medal    = medals[pos] || '';
+    const rowCls   = pos <= 3 ? `row row-${pos}` : 'row';
+    const meta     = [taller, zona].filter(Boolean).join(' · ');
+
+    return `
+      <div class="${rowCls}" style="animation-delay:${i*50}ms">
+        <div class="pos">${pos}</div>
+        <div class="medal">${medal}</div>
+        <div class="info">
+          <div class="mec-name">${nombre}</div>
+          ${meta ? `<div class="mec-meta">${meta}</div>` : ''}
+        </div>
+        <div class="right">
+          <div class="nivel-badge ${nbClass(nivel)}">${nivel}</div>
+          <div class="cli-num">${clientes}</div>
+          <div class="cli-label">clientes</div>
+        </div>
+      </div>`;
+  }).join('');
+
+  container.innerHTML = `<div class="ranking">${html}</div>`;
+
+  const now = new Date();
+  document.getElementById('updated').textContent =
+    'Actualizado: ' + now.toLocaleString('es-AR',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
+}
+
+async function tryFetch(urls, i=0) {
+  if (i >= urls.length) throw new Error('Sin conexión');
+  try {
+    const res = await fetch(urls[i], { cache:'no-store' });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const text = await res.text();
+    if (!text || text.length < 10) throw new Error('Vacío');
+    return text;
+  } catch(e) {
+    console.warn(`Proxy ${i+1} falló:`, e.message);
+    return tryFetch(urls, i+1);
+  }
+}
+
+async function load() {
+  try {
+    render(parseCSV(await tryFetch(PROXIES)));
+  } catch(e) {
+    document.getElementById('ranking-container').innerHTML = `
+      <div class="error-box">
+        No se pudo cargar el ranking.<br>
+        <small>Verificá tu conexión y recargá la página.</small>
+      </div>`;
+  }
+}
+
+load();
+setInterval(load, 5 * 60 * 1000);
+</script>
+</body>
+</html>
